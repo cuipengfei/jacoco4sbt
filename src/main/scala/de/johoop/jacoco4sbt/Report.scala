@@ -33,10 +33,10 @@ class Report(executionDataFile: File,
 
   private val format = new DecimalFormat("#.##")
 
-  def generate : Unit = {
+  def generate: Unit = {
     val (executionDataStore, sessionInfoStore) = loadExecutionData
     val bundleCoverage = analyzeStructure(executionDataStore, sessionInfoStore)
-    
+
     reportFormats foreach (createReport(_, bundleCoverage, executionDataStore, sessionInfoStore))
 
     if (!checkCoverage(bundleCoverage)) {
@@ -46,8 +46,7 @@ class Report(executionDataFile: File,
     }
   }
 
-  private[jacoco4sbt] def checkCoverage(bundle: IBundleCoverage) =
-  {
+  private[jacoco4sbt] def checkCoverage(bundle: IBundleCoverage) = {
     streams.log info ""
     streams.log info s"------- $reportTitle --------"
     streams.log info ""
@@ -63,8 +62,7 @@ class Report(executionDataFile: File,
     !(checkResult contains false)
   }
 
-  private[jacoco4sbt] def checkCounter(unit: String, c: ICounter, required: Double) =
-  {
+  private[jacoco4sbt] def checkCounter(unit: String, c: ICounter, required: Double) = {
     val missedCount = c.getMissedCount
     val totalCount = c.getTotalCount
     val coveredRatio = if (c.getCoveredRatio.isNaN) 0 else c.getCoveredRatio
@@ -87,7 +85,9 @@ class Report(executionDataFile: File,
       executionDataReader setExecutionDataVisitor executionDataStore
       executionDataReader setSessionInfoVisitor sessionInfoStore
 
-      while (executionDataReader.read()) { /* side effects galore :( */ }
+      while (executionDataReader.read()) {
+        /* side effects galore :( */
+      }
 
     } finally {
       fis.close()
@@ -105,13 +105,13 @@ class Report(executionDataFile: File,
     coverageBuilder getBundle reportTitle
   }
 
-  private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage, 
-      executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
+  private def createReport(reportFormat: FormattedReport, bundleCoverage: IBundleCoverage,
+                           executionDataStore: ExecutionDataStore, sessionInfoStore: SessionInfoStore) = {
 
     val visitor = reportFormat.visitor(reportDirectory)
-    
+
     visitor.visitInfo(sessionInfoStore.getInfos, executionDataStore.getContents)
-    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth)) 
+    visitor.visitBundle(bundleCoverage, new DirectoriesSourceFileLocator(sourceDirectories, sourceEncoding, tabWidth))
 
     visitor.visitEnd()
   }

@@ -26,7 +26,7 @@ object JacocoPlugin extends Plugin {
       sourceTabWidth := 2,
       sourceEncoding := "utf-8",
 
-      thresholds:= Thresholds(),
+      thresholds := Thresholds(),
       includes := Seq("*"),
 
       excludes := Seq(),
@@ -48,9 +48,9 @@ object JacocoPlugin extends Plugin {
 
     PathFinder(classes) ** new FileFilter {
       def accept(f: File) = IO.relativize(classes, f) match {
-        case Some(file) if ! f.isDirectory && file.endsWith(".class") =>
+        case Some(file) if !f.isDirectory && file.endsWith(".class") =>
           val name = Locate.toClassName(file)
-          inclFilters.exists(_ accept name) && ! exclFilters.exists(_ accept name)
+          inclFilters.exists(_ accept name) && !exclFilters.exists(_ accept name)
         case _ => false
       }
     } get
@@ -72,12 +72,13 @@ object JacocoPlugin extends Plugin {
       mergeReports := true)
   }
 
-  trait SharedSettings { _: Reporting with SavingData with Instrumentation with Keys =>
+  trait SharedSettings {
+    _: Reporting with SavingData with Instrumentation with Keys =>
     def srcConfig: Configuration
 
     def settings = Seq(ivyConfigurations += Config) ++ Seq(
       libraryDependencies +=
-        "org.jacoco" % "org.jacoco.agent" % "0.7.0.201403182114" % "jacoco" artifacts(Artifact("org.jacoco.agent", "jar", "jar"))
+        "org.jacoco" % "org.jacoco.agent" % "0.7.0.201403182114" % "jacoco" artifacts (Artifact("org.jacoco.agent", "jar", "jar"))
     ) ++ inConfig(Config)(Defaults.testSettings ++ JacocoDefaults.settings ++ Seq(
       classesToCover <<= (classDirectory in Compile, includes, excludes) map filterClassesToCover,
 
@@ -94,4 +95,5 @@ object JacocoPlugin extends Plugin {
       cover <<= report dependsOn check,
       check <<= ((outputDirectory, fork, streams) map saveDataAction) dependsOn test))
   }
+
 }

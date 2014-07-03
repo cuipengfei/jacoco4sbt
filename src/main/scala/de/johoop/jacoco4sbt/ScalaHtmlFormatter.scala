@@ -18,11 +18,11 @@ import org.jacoco.report.internal.html.table._
 import scala.Some
 
 /**
-  * Omits displaying instruction and branch coverage in the coverage tables,
-  * as Scala generates null checks which make these too noisy.
-  *
-  * TODO: Find a way to remove them from the annotated source code reports, too.
-  */
+ * Omits displaying instruction and branch coverage in the coverage tables,
+ * as Scala generates null checks which make these too noisy.
+ *
+ * TODO: Find a way to remove them from the annotated source code reports, too.
+ */
 class ScalaHtmlFormatter(withBranchCoverage: Boolean) extends HTMLFormatter {
   private var table: Option[Table] = None
 

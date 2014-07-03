@@ -20,14 +20,14 @@ trait SavingData extends JaCoCoRuntime {
     import java.io.FileOutputStream
     import org.jacoco.core.data.ExecutionDataWriter
 
-    if (! forked) {
+    if (!forked) {
       IO createDirectory jacocoDirectory
       val jacocoFile = jacocoDirectory / "jacoco.exec"
       val executionDataStream = new FileOutputStream(jacocoFile)
       try {
         streams.log debug ("writing execution data to " + jacocoFile)
         val executionDataWriter = new ExecutionDataWriter(executionDataStream)
-        runtimeData collect (executionDataWriter, executionDataWriter, true)
+        runtimeData collect(executionDataWriter, executionDataWriter, true)
         executionDataStream.flush
       } finally {
         executionDataStream.close
@@ -38,23 +38,23 @@ trait SavingData extends JaCoCoRuntime {
 
 trait Reporting extends JaCoCoRuntime {
   def reportAction(jacocoDirectory: File, reportFormats: Seq[FormattedReport], reportTitle: String,
-      sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
-      thresholds: Thresholds, streams: TaskStreams) = {
+                   sourceDirectories: Seq[File], classDirectories: Seq[File], sourceEncoding: String, tabWidth: Int,
+                   thresholds: Thresholds, streams: TaskStreams) = {
 
     val reportDataFile = jacocoDirectory / "jacoco-merged.exec" orElse "jacoco.exec"
     streams.log debug ("Using file %s to create report" format reportDataFile.getName)
 
     val report = new Report(
-        reportDirectory = jacocoDirectory,
-        executionDataFile = reportDataFile,
-        reportFormats = reportFormats,
-        reportTitle = reportTitle,
-        classDirectories = classDirectories,
-        sourceDirectories = sourceDirectories,
-        tabWidth = tabWidth,
-        sourceEncoding = sourceEncoding,
-        thresholds = thresholds,
-        streams = streams)
+      reportDirectory = jacocoDirectory,
+      executionDataFile = reportDataFile,
+      reportFormats = reportFormats,
+      reportTitle = reportTitle,
+      classDirectories = classDirectories,
+      sourceDirectories = sourceDirectories,
+      tabWidth = tabWidth,
+      sourceEncoding = sourceEncoding,
+      thresholds = thresholds,
+      streams = streams)
 
     report.generate
   }
@@ -62,5 +62,6 @@ trait Reporting extends JaCoCoRuntime {
   class FileWithOrElse(file: File) {
     def orElse(otherFileName: String): File = if (file.exists) file else new File(file.getParent, otherFileName)
   }
+
   implicit def fileToFileWithOrElse(f: File): FileWithOrElse = new FileWithOrElse(f)
 }

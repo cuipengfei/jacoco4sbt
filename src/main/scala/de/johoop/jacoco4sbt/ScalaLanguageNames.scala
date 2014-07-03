@@ -21,7 +21,7 @@ class ScalaLanguageNames extends JavaNames {
 
   override def getClassName(vmname: String, vmsignature: String, vmsuperclass: String, vminterfaces: Array[String]): String = {
     if (vmname.contains("anonfun$"))
-      vmname.split("""anonfun\$""").toList match {
+      vmname.split( """anonfun\$""").toList match {
         case List(pre, post) =>
           getClassName(cleanClassName(pre)) + " anonfun$" + post
         case _ =>

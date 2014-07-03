@@ -14,6 +14,7 @@ package de.johoop.jacoco4sbt
 import sbt._
 
 trait Merging extends JaCoCoRuntime {
+
   import org.jacoco.core.data.ExecutionDataWriter
   import org.jacoco.core.tools.ExecFileLoader
   import java.io._
@@ -51,7 +52,7 @@ trait Merging extends JaCoCoRuntime {
         case e: IOException => throw new ResourcesException("Error merging Jacoco files: %s" format e.getMessage)
       } finally out.close
     } catch {
-      case e: IOException => 
+      case e: IOException =>
         throw new ResourcesException("Unable to write out Jacoco file during merge: %s" format e.getMessage)
     }
   }

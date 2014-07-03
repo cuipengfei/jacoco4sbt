@@ -19,7 +19,7 @@ import org.objectweb.asm._
 import org.jacoco.core.analysis.{Analyzer, ICoverageVisitor, IMethodCoverage}
 import org.jacoco.core.internal.data.CRC64
 import org.jacoco.core.data.ExecutionDataStore
-import org.objectweb.asm.tree.{JumpInsnNode, MethodInsnNode, MethodNode, ClassNode}
+import org.objectweb.asm.tree.{MethodNode, ClassNode}
 import scala.collection.JavaConverters._
 
 /**
@@ -89,11 +89,11 @@ private final class FilteringClassAnalyzer(classid: Long, classNode: ClassNode, 
     def isModuleStaticInit = isModuleClass && name == "<clinit>"
 
     (
-         isSyntheticMethod(className, name, mc.getFirstLine, mc.getLastLine)  // equals/hashCode/unapply et al
-      || isModuleStaticInit // static init, `otherwise `case class Foo` reports uncovered code if `object Foo` is not accessed
-      || isScalaForwarder(className, node)
-      || isAccessor(node)
-    )
+      isSyntheticMethod(className, name, mc.getFirstLine, mc.getLastLine) // equals/hashCode/unapply et al
+        || isModuleStaticInit // static init, `otherwise `case class Foo` reports uncovered code if `object Foo` is not accessed
+        || isScalaForwarder(className, node)
+        || isAccessor(node)
+      )
   }
 }
 
@@ -108,7 +108,7 @@ final class FilteringAnalyzer(executionData: ExecutionDataStore,
 
   private def createFilteringVisitor(classid: Long, className: String, classNode: ClassNode): ClassVisitor = {
     val data = Option(executionData get classid)
-    val (noMatch, probes) = data map (data => (false, data getProbes)) getOrElse (executionData contains className, null)
+    val (noMatch, probes) = data map (data => (false, data getProbes)) getOrElse(executionData contains className, null)
     val analyzer = new FilteringClassAnalyzer(classid, classNode, noMatch, probes, new StringPool, coverageVisitor)
     new ClassProbesAdapter(analyzer, false)
   }
